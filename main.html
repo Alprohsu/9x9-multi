@@ -267,6 +267,7 @@
         
         <div id="game-zone-2" class="center-flex">
             <span>答對: <b id="score-val" style="color:#e74c3c">0</b> 題</span>
+            <span>答錯: <b id="fault-val" style="color:#e74c3c">0</b> 次</span>
             <span>時間: <b id="time-val" style="color:#2980b9">90</b> 秒</span>
         </div>
 
@@ -288,8 +289,8 @@
 
     <div id="modal-result">
         <div class="modal-box">
-            <h2 style="color:#2ECC71; font-size:2rem; margin-bottom:10px;">時間到！</h2>
-            <p id="final-msg" style="font-size:1.5rem; margin:20px 0; color:#555;">恭喜！你答對 ? 題</p>
+            <h2 style="color:#2ECC71; font-size:2rem; margin-bottom:10px;">時間到！恭喜！</h2>
+            <p id="final-msg" style="font-size:1.5rem; margin:20px 0; color:#555;">答對 ? 題</p>
             <button class="btn-ellipse bg-start" onclick="location.reload()">重新開始</button>
         </div>
     </div>
@@ -299,6 +300,7 @@
         let audioCtx;
         let selectedMatrixB = new Set([2,3,4,5,6,7,8,9]); // 預設全選
         let score = 0;
+        let faultScore = 0;
         let timerSeconds = 90; // 計時 90 秒
         let timerInterval;
         let currentAnswer = 0;
@@ -467,7 +469,7 @@
             //if (answer == multiplicand)
               //let optionsArr = [answer, answer+1, answer+2, answer+3];
             //else
-              let optionsArr = [answer, answer+1, answer+multiplicand, answer-multiplicand];
+              let optionsArr = [answer, answer+1, answer+multiplicand, answer-multiplicand+1];
             
             // 洗牌顯示位置
             optionsArr.sort(() => Math.random() - 0.5);
@@ -513,6 +515,8 @@
             } else {
                 // --- 答錯 ---
                 // 不結束本題，允許重試
+                faultScore++;
+                updateUI();
                 
                 // 視覺回饋
                 fbText.innerText = "喔喔！再想想";
@@ -533,6 +537,7 @@
 
         function updateUI() {
             document.getElementById('score-val').innerText = score;
+            document.getElementById('fault-val').innerText = faultScore;
         }
 
         function endGameNow() {
@@ -543,7 +548,7 @@
         function gameOver() {
             clearInterval(timerInterval);
             document.getElementById('modal-result').style.display = 'flex';
-            document.getElementById('final-msg').innerText = `恭喜！你答對 ${score} 題`;
+            document.getElementById('final-msg').innerText = `答對 ${score} 題，答錯 ${faultScore} 次`;
             playTone('win'); // 結束時播放一次勝利音效
         }
     </script>
